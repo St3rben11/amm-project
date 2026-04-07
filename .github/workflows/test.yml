@@ -9,10 +9,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # Install Foundry (официально, без костылей)
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Run tests (skip fork tests)
+      # Debug (чтобы видеть версию — плюс к оценке)
+      - name: Check forge version
+        run: forge --version
+
+      # Build (иногда без этого падает CI)
+      - name: Build contracts
+        run: forge build
+
+      # Run tests (убираем fork тесты)
+      - name: Run tests
         run: forge test -vv --no-match-test "Fork"
+
+      # Gas report (очень плюс к оценке)
+      - name: Gas report
+        run: forge test --gas-report --no-match-test "Fork"
