@@ -14,5 +14,5 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Run tests (NO FORK)
-        run: forge test -vv --no-match-path "test/Fork.t.sol|test/UniswapFork.t.sol"
+      - name: Run tests (skip fork tests)
+        run: forge test -vv --no-match-test "Fork"
