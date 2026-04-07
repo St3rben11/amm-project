@@ -9,39 +9,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout
+      # 1. Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Foundry
+      # 2. Install Foundry (фикс PATH)
       - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
+          echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+          source ~/.bashrc || true
           ~/.foundry/bin/foundryup
 
-      # Add to PATH
-      - name: Add Foundry to PATH
-        run: echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+      # 3. Verify installation (очень важно)
+      - name: Verify Foundry
+        run: forge --version
 
-      # Build
-      - name: Build
+      # 4. Install dependencies
+      - name: Install dependencies
+        run: forge install
+
+      # 5. Build
+      - name: Build contracts
         run: forge build
 
-      # Tests (без fork)
+      # 6. Tests
       - name: Run tests
         run: forge test -vv
 
-      # Gas report
+      # 7. Gas report
       - name: Gas report
         run: forge test --gas-report
 
-      # Python
+      # 8. Python (для Slither)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # Slither
+      # 9. Slither
       - name: Install Slither
         run: pip install slither-analyzer
 
