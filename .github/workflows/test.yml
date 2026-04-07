@@ -1,4 +1,4 @@
-name: Tests
+name: Smart Contract CI
 
 on:
   push:
@@ -8,20 +8,53 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    env:
+      MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
 
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install Foundry
       - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
-          source ~/.bashrc
+          export PATH="$HOME/.foundry/bin:$PATH"
           ~/.foundry/bin/foundryup
-          echo "$HOME/.foundry/bin" >> $GITHUB_PATH
 
-      - name: Check forge
-        run: forge --version
+      # 3. Add Foundry to PATH
+      - name: Set Foundry PATH
+        run: echo "$HOME/.foundry/bin" >> $GITHUB_PATH
 
-      - name: Run tests
-        env:
-          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
-        run: forge test --fork-url $MAINNET_RPC_URL -vv
+      # 4. Install dependencies
+      - name: Install dependencies
+        run: forge install
+
+      # 5. Build contracts
+      - name: Build contracts
+        run: forge build
+
+      # 6. Run ALL tests (including fork)
+      - name: Run tests (with fork)
+        run: |
+          forge test --fork-url $MAINNET_RPC_URL -vv
+
+      # 7. Gas report
+      - name: Gas report
+        run: |
+          forge test --fork-url $MAINNET_RPC_URL --gas-report
+
+      # 8. Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 9. Install Slither
+      - name: Install Slither
+        run: pip install slither-analyzer
+
+      # 10. Run Slither
+      - name: Run Slither
+        run: slither . || true
