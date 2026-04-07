@@ -9,17 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ✅ ОФИЦИАЛЬНАЯ УСТАНОВКА FOUNDRY
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      # ✅ ПРОВЕРКА
-      - name: Check forge
-        run: forge --version
-
-      # ✅ ТЕСТЫ (без fork)
-      - name: Run tests
+      - name: Run tests (NO FORK)
         run: forge test -vv --no-match-path "test/Fork.t.sol|test/UniswapFork.t.sol"
