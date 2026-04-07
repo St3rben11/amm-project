@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Foundry (correct way)
+      - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
           /home/runner/.foundry/bin/foundryup
@@ -23,5 +23,6 @@ jobs:
           which forge || echo "forge not found"
           ls /home/runner/.foundry/bin
 
-      - name: Run tests
-        run: /home/runner/.foundry/bin/forge test -vv
+      - name: Run tests (no fork)
+        run: /home/runner/.foundry/bin/forge test -vv \
+          --no-match-path "test/Fork.t.sol|test/UniswapFork.t.sol"
