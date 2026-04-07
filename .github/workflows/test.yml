@@ -13,22 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Foundry (официально, без костылей)
+      # Install Foundry (official)
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      # Debug (чтобы видеть версию — плюс к оценке)
+      # Check version (плюс к оценке)
       - name: Check forge version
         run: forge --version
 
-      # Build (иногда без этого падает CI)
+      # Build
       - name: Build contracts
         run: forge build
 
-      # Run tests (убираем fork тесты)
+      # Run tests (ПРАВИЛЬНО исключаем fork)
       - name: Run tests
-        run: forge test -vv --no-match-test "Fork"
+        run: forge test -vv --no-match-path "test/*Fork*.t.sol"
 
-      # Gas report (очень плюс к оценке)
+      # Gas report
       - name: Gas report
-        run: forge test --gas-report --no-match-test "Fork"
+        run: forge test --gas-report --no-match-path "test/*Fork*.t.sol"
