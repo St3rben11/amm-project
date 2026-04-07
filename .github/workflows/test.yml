@@ -9,12 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
-          ~/.foundry/bin/foundryup
+          echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+          source ~/.bashrc
+          foundryup
 
       - name: Run tests
-        run: forge test --fork-url ${{ secrets.MAINNET_RPC_URL }}
+        env:
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+        run: forge test --fork-url $MAINNET_RPC_URL
