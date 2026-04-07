@@ -88,21 +88,21 @@ contract LendingPool {
     }
 
     function liquidate(address user) external {
-        _accrue(user); // ✅ важно
+    _accrue(user);
 
-        uint maxBorrow = (collateral[user] * LTV) / 100;
-        require(debt[user] > maxBorrow, "User position is healthy");
+    uint maxBorrow = (collateral[user] * LTV) / 100;
+    require(debt[user] > maxBorrow, "User position is healthy");
 
-        uint repayAmount = debt[user] / 2;
-        uint seizeAmount = collateral[user] / 2;
+    uint repayAmount = debt[user] / 2;
+    uint seizeAmount = collateral[user] / 2;
 
-        require(token.transferFrom(msg.sender, address(this), repayAmount), "Repay failed");
+    require(token.transferFrom(msg.sender, address(this), repayAmount), "Repay failed");
 
-        debt[user] -= repayAmount;
-        collateral[user] -= seizeAmount;
+    debt[user] -= repayAmount;
+    collateral[user] -= seizeAmount;
 
-        require(token.transfer(msg.sender, seizeAmount), "Seize failed");
-    }
+    require(token.transfer(msg.sender, seizeAmount), "Seize failed");
+}
 
     // ✅ NEW: health factor (для критериев)
     function healthFactor(address user) public view returns (uint) {
