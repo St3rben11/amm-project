@@ -14,11 +14,14 @@ jobs:
       - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
-          echo "$HOME/.foundry/bin" >> $GITHUB_PATH
           source ~/.bashrc
-          foundryup
+          ~/.foundry/bin/foundryup
+          echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+
+      - name: Check forge
+        run: forge --version
 
       - name: Run tests
         env:
           MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
-        run: forge test --fork-url $MAINNET_RPC_URL
+        run: forge test --fork-url $MAINNET_RPC_URL -vv
