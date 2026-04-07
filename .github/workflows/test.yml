@@ -12,17 +12,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ ОФИЦИАЛЬНАЯ УСТАНОВКА FOUNDRY
       - name: Install Foundry
-        run: |
-          curl -L https://foundry.paradigm.xyz | bash
-          /home/runner/.foundry/bin/foundryup
-          echo "/home/runner/.foundry/bin" >> $GITHUB_PATH
+        uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Debug PATH
-        run: |
-          which forge || echo "forge not found"
-          ls /home/runner/.foundry/bin
+      # ✅ ПРОВЕРКА
+      - name: Check forge
+        run: forge --version
 
-      - name: Run tests (no fork)
-        run: /home/runner/.foundry/bin/forge test -vv \
-          --no-match-path "test/Fork.t.sol|test/UniswapFork.t.sol"
+      # ✅ ТЕСТЫ (без fork)
+      - name: Run tests
+        run: forge test -vv --no-match-path "test/Fork.t.sol|test/UniswapFork.t.sol"
