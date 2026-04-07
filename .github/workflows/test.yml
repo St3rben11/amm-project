@@ -14,9 +14,11 @@ jobs:
       - name: Install Foundry
         run: |
           curl -L https://foundry.paradigm.xyz | bash
+          source ~/.bashrc
           ~/.foundry/bin/foundryup
 
+      - name: Add Foundry to PATH
+        run: echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+
       - name: Run tests
-        run: forge test --fork-url $MAINNET_RPC_URL
-        env:
-          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+        run: forge test
